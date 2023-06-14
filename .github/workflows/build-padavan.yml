@@ -21,12 +21,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - uses: actions/setup-go@v3
+					
+    - uses: actions/checkout@v3
+    - uses: hendrikmuhs/ccache-action@v1.2
       with:
-          go-version: '1.20'
-          check-latest: true
+        key: ${{ github.event.inputs.production }}
+        append-timestamp: false
+    - uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+        check-latest: true
+        cache-dependency-path: '**/go.sum'
       
     - name: 生成版本号
       run: |
@@ -169,7 +174,7 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_WIREGUARD=n" >>.config #wireguard 10k
         ##内网穿透服务##
         echo "CONFIG_FIRMWARE_INCLUDE_ALDRIVER=n" >> .config #ALDRIVER  ~3m
-        echo "CONFIG_FIRMWARE_INCLUDE_MSD_LITE=y" >> .config #MSD_LITE
+        echo "CONFIG_FIRMWARE_INCLUDE_MSD_LITE=n" >> .config #MSD_LITE
         #########################################################################################
         # 自定义添加其它功能请参考源码configs/templates/目录下的config文件。按照上面的格式添加即可
         # 格式如下：
